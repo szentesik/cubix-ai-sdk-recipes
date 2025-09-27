@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { text, varchar, timestamp, pgTable } from "drizzle-orm/pg-core";
+import { text, varchar, timestamp, pgTable, vector } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -17,6 +17,15 @@ export const resources = pgTable("resources", {
   updatedAt: timestamp("updated_at")
     .notNull()
     .default(sql`now()`),
+});
+
+export const embeddings = pgTable("embeddings", {
+  id: varchar("id", { length: 191 })
+    .primaryKey()
+    .$defaultFn(() => nanoid()),
+  resourceId: varchar("resource_id", { length: 191 }).notNull(),
+  content: text("content").notNull(),
+  embedding: vector("embedding", { dimensions: 1536 }).notNull(),
 });
 
 // Schema for resources - used to validate API requests
