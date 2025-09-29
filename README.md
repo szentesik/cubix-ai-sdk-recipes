@@ -37,11 +37,81 @@ Execute
 ```shell
 npm run dev
 ```
-to start application. By default, application will be run at http://localhost:3000 address.
+to start application in developer mode. By default, application will be accessible at http://localhost:3000 address.
 
 ### Upload 
+POST ` /api/upload `
+
+- Accepts a single recipe document in JSON format and stores it in the database. The content is embedded and saved into the `embeddings` table for semantic search.
+
+Request body (JSON):
+```json
+{
+  "id": 123,
+  "category": "Document",
+  "recipe_name": "Chocolate Cake",
+  "section_type": "full",
+  "ingredients_count": 10,
+  "steps_count": 7,
+  "prep_time": "About 45 minutes",
+  "difficulty": "medium",
+  "source_file": "chocolate_cake.md",
+  "text": "Full plain-text content to index...",
+  "chunking_method": "section based"
+}
+```
+
+Field description:
+- **id** (number, required): Unique identifier of the recipe document.
+- **category** (string, optional): 
+- **recipe_name** (string, required): 
+- **section_type** (enum, optional): one of `info`, `ingredients`, `steps`, `notes`, `based on`, `full`.
+- **ingredients_count** (number, optional)
+- **steps_count** (number, optional)
+- **prep_time** (string, optional)
+- **difficulty** (enum, optional): one of `easy`, `medium`, `hard`.
+- **source_file** (string, required): Path or name of the original source file.
+- **text** (string, required): The document content that will be embedded and stored.
+- **chunking_method** (string, optional)
+
+Example:
+```bash
+curl -X POST http://localhost:3000/api/upload \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": 123,
+    "category": "Document",
+    "recipe_name": "Chocolate Cake",
+    "section_type": "full",
+    "ingredients_count": 10,
+    "steps_count": 7,
+    "prep_time": "About 45 minutes",
+    "difficulty": "medium",
+    "source_file": "chocolate_cake.md",
+    "text": "Full plain-text content to index...",
+    "chunking_method": "section based"
+  }'
+```
+
+Responses:
+- 201 Created
+  - Body: `{ "message": "document received" }`
+- 400 Bad Request (malformed JSON)
+  - Body: `{ "error": "Invalid JSON" }`
+- 400 Bad Request (validation error)
+  - Body: `{ "error": "Invalid parameters", "details": [ ...zod issues... ] }`
+- 400 Bad Request (persistence error)
+  - Body: `{ "error": "Error creating resource", "details": "..." }`
+
+Separate python application is available for mass upload. Execute
+```shell
+cd upload_recipes
+py main.py
+```
+to upload all recipes in *upload_recipes/data* directory.
 
 
 ### Search
 
-  
+Open *http://localhost:3000* to access AI assistant and ask 
+questions about cooking suggestions and recipes.
