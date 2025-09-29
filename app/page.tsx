@@ -1,12 +1,17 @@
 'use client';
 
 import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
 import { useState } from 'react';
 
 export default function Chat() {
   const [input, setInput] = useState('');
   const [expandedTools, setExpandedTools] = useState<Record<string, boolean>>({});
-  const { messages, sendMessage } = useChat();
+  const { messages, sendMessage } = useChat({
+    transport: new DefaultChatTransport({
+      api: '/api/chat',
+    }),
+  });
 
   const toggleToolDetails = (messageId: string, partIndex: number) => {
     const key = `${messageId}-${partIndex}`;
@@ -37,7 +42,7 @@ export default function Chat() {
                 {toolParts.length > 0 && (
                   <details className="mt-2">
                     <summary className="cursor-pointer text-sm text-gray-600 hover:text-gray-800">
-                      ▶ Show how I found this ({toolParts.length} tool call{toolParts.length !== 1 ? 's' : ''})
+                      ? Show how I found this ({toolParts.length} tool call{toolParts.length !== 1 ? 's' : ''})
                     </summary>
                     <div className="mt-2 pl-4 border-l-2 border-gray-200 space-y-2">
                       {toolParts.map((part, index) => (
@@ -75,7 +80,7 @@ export default function Chat() {
         <input
           className="fixed bottom-0 w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
           value={input}
-          placeholder="Say something..."
+          placeholder="Ask something..."
           onChange={e => setInput(e.currentTarget.value)}
         />
       </form>

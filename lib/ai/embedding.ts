@@ -40,16 +40,24 @@ export const findRelevantContent = async (userQuery: string) => {
     embeddings.embedding,
     userQueryEmbedded,
   )})`;
-  const similarGuides = await db
+  try {
+    const similarGuides = await db
     .select({ content: embeddings.content, similarity })
     .from(embeddings)
     .where(gt(similarity, 0.3))
     .orderBy((t) => desc(t.similarity))
     .limit(4);
   
-  if (similarGuides.length === 0) {
-    return "No relevant information found in the knowledge base.";
-  }
-  
-  return similarGuides.map(guide => guide.content).join('\n');
+    if (similarGuides.length === 0) {
+      console.warn('findRelevantContent: empty result')
+      return "No relevant information found in the knowledge base.";
+    }
+
+    console.log(`findRelevantContent: ${similarGuides.length} guides found`)
+    
+    return similarGuides.map(guide => guide.content).join('\n');    
+  } catch (error) {
+    console.error('findRelevantContent: Exception while accessing the database.', error)
+    return "Knowledge base is temporarily not available.";
+  }  
 };
