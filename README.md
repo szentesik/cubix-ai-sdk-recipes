@@ -1,14 +1,47 @@
-# Vercel AI SDK RAG Guide Starter Project
+# AI SDK demo project using Jeff Thompson's recipe collection
 
-This is the starter project for the Vercel AI SDK [Retrieval-Augmented Generation (RAG) guide](https://sdk.vercel.ai/docs/guides/rag-chatbot).
+## Prerequisites
+* Node.js 20.12.0 or later installed.
+* Operating systems: macOS, Windows (including WSL), or Linux.
+* PostgreSQL database with pgvector extension
+* Docker (optional, to run pgvector locally)
 
-In this project, you will build a chatbot that will only respond with information that it has within its knowledge base. The chatbot will be able to both store and retrieve information. This project has many interesting use cases from customer support through to building your own second brain!
+For development and test purposes, Docker Compose file is bundled to run pgvector locally. Execute
+```shell
+docker compose up -d
+```
+in the directory *docker-compose-yml* resides to start database system in the background
 
-This project will use the following stack:
+To stop database, execute
+```shell
+docker compose stop
+```
 
-- [Next.js](https://nextjs.org) 14 (App Router)
-- [Vercel AI SDK](https://sdk.vercel.ai/docs)
-- [OpenAI](https://openai.com)
-- [Drizzle ORM](https://orm.drizzle.team)
-- [Postgres](https://www.postgresql.org/) with [ pgvector ](https://github.com/pgvector/pgvector)
-- [shadcn-ui](https://ui.shadcn.com) and [TailwindCSS](https://tailwindcss.com) for styling
+## Configuration
+Set the following environment variables in the system or in *.env* file. 
+* **DATABASE_URL**: Database url, in *postgres://{username}:{password}@{hostname}:{port}/{dbname}* format
+* **OPENAI_API_KEY**: valid OpenAI API key. Organization should be verified to use application (can be checked in https://platform.openai.com/settings/organization/general)
+
+## Installation
+
+To initialize the database, execute
+
+```shell
+npm run db:migrate
+```
+in the application root directory before using the application the first time.
+
+## Usage
+
+Execute 
+```shell
+npm run dev
+```
+to start application. By default, application will be run at http://localhost:3000 address.
+
+### Upload 
+
+
+### Search
+
+  
